@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <script src="../js/firebase.js"></script>
+</head>
+<body>
+  <h2>Welcome Admin</h2>
+  <button onclick="logout()">Logout</button>
+
+  <h3>Add New Content</h3>
+  <input type="text" id="title" placeholder="Title"><br>
+  <textarea id="body" placeholder="Content"></textarea><br>
+  <select id="category">
+    <option value="rhymes">Rhymes</option>
+    <option value="stories">Stories</option>
+    <option value="jokes">Jokes</option>
+    <option value="islamic">Islamic</option>
+    <!-- আরো category -->
+  </select>
+  <button onclick="addContent()">Add</button>
+
+  <script>
+    const db = firebase.firestore();
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) window.location.href = "login.html";
+    });
+
+    function logout() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = "login.html";
+      });
+    }
+
+    function addContent() {
+      const title = document.getElementById("title").value;
+      const body = document.getElementById("body").value;
+      const category = document.getElementById("category").value;
+
+      db.collection(category).add({ title, body, createdAt: Date.now() })
+        .then(() => alert("Content added successfully!"))
+        .catch(error => alert("Failed: " + error.message));
+    }
+  </script>
+</body>
+</html>
